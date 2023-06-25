@@ -13,7 +13,7 @@ use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
-class JobControllers extends Controller
+class JobController extends Controller
 {
     public function __construct(public JobService $jobService){
     }

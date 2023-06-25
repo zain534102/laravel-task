@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('pages.jobs.index');
 });
-Route::resource('jobs',\App\Http\Controllers\Job\JobControllers::class);
-Route::get('jobs/{job}/show',[\App\Http\Controllers\Job\JobControllers::class,'showJob'])->name('jobs.show.ajax');
+Route::resource('jobs',\App\Http\Controllers\Job\JobController::class);
+Route::get('jobs/{job}/show',[\App\Http\Controllers\Job\JobController::class,'showJob'])->name('jobs.show.ajax');
