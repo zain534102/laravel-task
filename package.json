@@ -9,7 +9,5 @@
         "laravel-vite-plugin": "^0.7.5",
         "vite": "^4.0.0"
     },
-    "dependencies": {
-
-    }
+    "dependencies": {}
 }
