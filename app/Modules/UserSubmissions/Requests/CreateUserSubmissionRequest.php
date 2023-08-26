@@ -21,7 +21,10 @@ class CreateUserSubmissionRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'name' => 'required|string|max:255',
+            'message' => 'required|string|max:255'
+        ];
     }
 }
 
