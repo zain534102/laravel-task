@@ -7,7 +7,9 @@ use App\Modules\UserSubmissions\Requests\CreateUserSubmissionRequest;
 use App\Modules\UserSubmissions\Requests\UpdateUserSubmissionRequest;
 use App\Modules\UserSubmissions\Services\UserSubmissionService;
 use App\Modules\UserSubmissions\UserSubmission;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserSubmissionController extends Controller
 {
@@ -31,9 +33,9 @@ class UserSubmissionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return $this->userSubmissionService->index();
     }
@@ -42,44 +44,10 @@ class UserSubmissionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param CreateUserSubmissionRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(CreateUserSubmissionRequest $request)
+    public function store(CreateUserSubmissionRequest $request): JsonResponse
     {
        return $this->userSubmissionService->store($request,$this->includes);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param string $userSubmissionId
-     * @return \Illuminate\Http\Response
-     */
-    public function show(string $userSubmissionId)
-    {
-       return $this->userSubmissionService->show($userSubmissionId);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param UpdateUserSubmissionRequest $request
-     * @param UserSubmission $userSubmission
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateUserSubmissionRequest $request, UserSubmission $userSubmission)
-    {
-         return $this->userSubmissionService->update($request,$userSubmission,$this->includes);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param UserSubmission $userSubmission
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(UserSubmission $userSubmission)
-    {
-        return $this->userSubmissionService->destroy($userSubmission);
     }
 }

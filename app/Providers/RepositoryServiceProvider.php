@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-
 class RepositoryServiceProvider extends BaseRepositoryServiceProvider
 {
     /**
@@ -11,13 +9,15 @@ class RepositoryServiceProvider extends BaseRepositoryServiceProvider
      *
      * @var array|string[]
      */
-    protected array $modules = [];
+    protected array $modules = [
+        'UserSubmission'
+    ];
     /**
      * Register services.
      */
     public function register(): void
     {
-        //
+        parent::register();
     }
 
     /**
@@ -25,6 +25,5 @@ class RepositoryServiceProvider extends BaseRepositoryServiceProvider
      */
     public function boot(): void
     {
-        //
     }
 }

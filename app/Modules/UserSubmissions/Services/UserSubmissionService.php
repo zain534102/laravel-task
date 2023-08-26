@@ -5,9 +5,11 @@ namespace App\Modules\UserSubmissions\Services;
 use App\Modules\Common\Services\BaseService;
 use App\Modules\UserSubmissions\Contracts\Repositories\UserSubmissionRepository;
 use App\Modules\UserSubmissions\Requests\CreateUserSubmissionRequest;
-use App\Modules\UserSubmissions\Requests\UpdateUserSubmissionRequest;
-use App\Modules\UserSubmissions\UserSubmission;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserSubmissionService extends BaseService
 {
@@ -26,14 +28,14 @@ class UserSubmissionService extends BaseService
      *
      * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        if (request()->has('all')) {
-            $userSubmissions = $this->userSubmissionRepository->get();
-        } else {
-            $userSubmissions = $this->userSubmissionRepository->paginate();
+        if(Cache::has('user_submission')){
+            $userSubmissions = (Cache::get('user_submission'));
+            $this->userSubmissionRepository->setModel($userSubmissions);
+            return response()->json($this->userSubmissionRepository->transformItem());
         }
-        $data = $this->userSubmissionRepository->transformCollection($userSubmissions);
+        $data = $this->userSubmissionRepository->transformCollection($this->userSubmissionRepository->paginate());
         return response()->json($data);
     }
 
@@ -41,58 +43,24 @@ class UserSubmissionService extends BaseService
      * Store a newly created resource in storage.
      *
      * @param CreateUserSubmissionRequest $request
+     * @param array $includes
      * @return JsonResponse
      */
-    public function store(CreateUserSubmissionRequest $request, array $includes)
+    public function store(CreateUserSubmissionRequest $request, array $includes): JsonResponse
     {
-        $userSubmission = $this->userSubmissionRepository->create($request->all())
-            ->load(includes_to_camel_case($includes));
-        $this->userSubmissionRepository->setModel($userSubmission);
-        $data = $this->userSubmissionRepository->transformItem($includes);
-        return response()->json($data, 201);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param string $userSubmissionId
-     * @return JsonResponse
-     */
-    public function show(int $userSubmissionId)
-    {
-        $userSubmission = $this->userSubmissionRepository->findByParams([$userSubmissionId]);
-        $this->userSubmissionRepository->setModel($userSubmission);
-        $data = $this->userSubmissionRepository->transformItem();
-        return response()->json($data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param UpdateUserSubmissionRequest $request
-     * @param UserSubmission $userSubmission
-     * @return JsonResponse
-     */
-    public function update(UpdateUserSubmissionRequest $request, UserSubmission $userSubmission, array $includes)
-    {
-        $this->userSubmissionRepository->setModel($userSubmission);
-        $this->userSubmissionRepository->update($request->all());
-        $userSubmission->load(includes_to_camel_case($includes));
-        $data = $this->userSubmissionRepository->transformItem();
-        return response()->json($data);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param UserSubmission $userSubmission
-     * @return JsonResponse
-     */
-    public function destroy(UserSubmission $userSubmission)
-    {
-        $this->userSubmissionRepository->setModel($userSubmission);
-        $this->userSubmissionRepository->delete();
-        $data = $this->userSubmissionRepository->transformNull();
-        return response()->json($data, 202);
+        DB::beginTransaction();
+        try {
+            $userSubmission = $this->userSubmissionRepository->create($request->validated());
+            Cache::put('user_submission',$userSubmission, 10);
+            $this->userSubmissionRepository->setModel($userSubmission);
+            $data = $this->userSubmissionRepository->transformItem($includes);
+            DB::commit();
+            return response()->json($data, Response::HTTP_CREATED);
+        }
+        catch (\Exception $exception){
+            Log::info("Error message while creating user submission",['error'=> $exception->getMessage(),'error_file'=>$exception->getFile(),'line'=>$exception->getLine()]);
+            DB::rollBack();
+            return response()->json(['There is an issue on creation'],Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

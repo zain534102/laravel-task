@@ -162,12 +162,12 @@ class BaseRepository implements BaseRepositoryContract
     }
 
     /**
-     * @param Builder $query
+     * @param Builder|QueryBuilder $query
      * @param bool $simple
      * @param int $perPage
      * @return Paginator
      */
-    protected function doPaginate(Builder $query, bool $simple = false, int $perPage = 15): Paginator
+    protected function doPaginate(Builder|QueryBuilder $query, bool $simple = false, int $perPage = 15): Paginator
     {
         $simple = $simple || request()->input('paginator') === 'simple';
 

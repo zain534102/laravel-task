@@ -59,7 +59,7 @@ abstract class BaseRepositoryServiceProvider extends ServiceProvider
     /**
      * Register the repositories
      */
-    public function register(): void
+    public function register()
     {
         foreach ($this->modules as $module) {
             $this->app->bind(
@@ -68,6 +68,4 @@ abstract class BaseRepositoryServiceProvider extends ServiceProvider
             );
         }
     }
-
-
 }

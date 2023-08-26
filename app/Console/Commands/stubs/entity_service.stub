@@ -8,6 +8,9 @@ use App\Modules\Common\Services\BaseService;
 use DummyModuleNamespace\Requests\CreateDummyClassRequest;
 use DummyModuleNamespace\Requests\UpdateDummyClassRequest;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DummyClassService extends BaseService
 {
@@ -45,11 +48,20 @@ class DummyClassService extends BaseService
      */
     public function store(CreateDummyClassRequest $request, array $includes)
     {
-        $dummyModel = $this->dummyRepository->create($request->all())
-            ->load(includes_to_camel_case($includes));
-        $this->dummyRepository->setModel($dummyModel);
-        $data = $this->dummyRepository->transformItem($includes);
-        return response()->json($data, 201);
+        DB::beginTransaction();
+        try {
+            $dummyModel = $this->dummyRepository->create($request->validated())
+                ->load(includes_to_camel_case($includes));
+            $this->dummyRepository->setModel($dummyModel);
+            $data = $this->dummyRepository->transformItem($includes);
+            DB::commit();
+            return response()->json($data, 201);
+        }
+        catch (\Exception $exception){
+            Log::info("Error message while creating user submission",['error'=> $exception->getMessage(),'error_file'=>$exception->getFile(),'line'=>$exception->getLine()]);
+            DB::rollBack();
+            return response()->json(['There is an issue on creation'],Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -75,10 +87,19 @@ class DummyClassService extends BaseService
      */
     public function update(UpdateDummyClassRequest $request, DummyClass $dummyModel, array $includes)
     {
-        $this->dummyRepository->setModel($dummyModel);
-        $this->dummyRepository->update($request->all())->load(includes_to_camel_case($includes));
-        $data = $this->dummyRepository->transformItem();
-        return response()->json($data);
+         DB::beginTransaction();
+         try {
+            $this->dummyRepository->setModel($dummyModel);
+            $this->dummyRepository->update($request->all())->load(includes_to_camel_case($includes));
+            $data = $this->dummyRepository->transformItem();
+            DB::commit();
+            return response()->json($data);
+         }
+         catch (\Exception $exception){
+             Log::info("Error message while creating user submission",['error'=> $exception->getMessage(),'error_file'=>$exception->getFile(),'line'=>$exception->getLine()]);
+             DB::rollBack();
+             return response()->json(['There is an issue on updating record'],Response::HTTP_INTERNAL_SERVER_ERROR);
+         }
     }
 
     /**

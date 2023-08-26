@@ -17,7 +17,7 @@ class JSendSerializer extends DataArraySerializer
      */
     public function collection($resourceKey, array $data) :array
     {
-        $resourceKey = str_plural($resourceKey);
+        $resourceKey = Str::plural($resourceKey);
         if (mb_strlen(json_encode($data)) > config('app.response_size_limit', 4660001)) {
             $data = $this->uploadResponse([ $resourceKey => $data ]);
             $resourceKey = 'response_file';
@@ -40,7 +40,7 @@ class JSendSerializer extends DataArraySerializer
      */
     public function item($resourceKey, array $data) :array
     {
-        $resourceKey = str_singular($resourceKey);
+        $resourceKey = Str::singular($resourceKey);
         if (mb_strlen(json_encode($data)) > config('app.response_size_limit', 4660001)) {
             $data = $this->uploadResponse($data);
             $resourceKey = 'response_file';
@@ -79,7 +79,7 @@ class JSendSerializer extends DataArraySerializer
             // check for null resource
             if ($include['data'] === null) {
                 return [
-                    str_singular($key) => null
+                    Str::singular($key) => null
                 ];
             }
 
@@ -91,7 +91,7 @@ class JSendSerializer extends DataArraySerializer
 
     private function uploadResponse($data): string
     {
-        $key = str_random(40);
+        $key = Str::random(40);
         Storage::disk('responses')->put($key, json_encode($data, true));
 
         return Storage::disk('responses')->temporaryUrl($key, now()->addMinutes(config('app.temporary_url_lifetime', 5)));
