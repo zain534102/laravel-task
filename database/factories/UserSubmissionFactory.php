@@ -2,8 +2,12 @@
 
 use App\Modules\UserSubmissions\UserSubmission;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 $factory->define(UserSubmission::class, function (Faker $faker) {
-    return [];
+    return [
+        'name' => fake()->name(),
+        'message' => fake()->sentence()
+    ];
 });
