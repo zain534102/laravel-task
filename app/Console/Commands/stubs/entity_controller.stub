@@ -11,10 +11,6 @@ use App\Http\Controllers\Controller;
 
 class DummyPluralClassController extends Controller
 {
-    /**
-     * @var DummyClassService
-     */
-    private DummyClassService $dummyService;
 
     /**
      * @var array
@@ -24,11 +20,11 @@ class DummyPluralClassController extends Controller
     /**
      * DummyPluralClassController constructor.
      *
+     * @param UserSubmissionService $userSubmissionService
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, private readonly DummyClassService $dummyService)
     {
-        $this->dummyService = resolve(DummyClassService::class);
         $this->includes = $request->has('include') ? explode(',', $request->input('include')) : [];
     }
 

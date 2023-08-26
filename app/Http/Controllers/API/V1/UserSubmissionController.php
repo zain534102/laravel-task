@@ -11,10 +11,6 @@ use Illuminate\Http\Request;
 
 class UserSubmissionController extends Controller
 {
-    /**
-     * @var UserSubmissionService
-     */
-    private UserSubmissionService $userSubmissionService;
 
     /**
      * @var array
@@ -24,11 +20,11 @@ class UserSubmissionController extends Controller
     /**
      * UserSubmissionController constructor.
      *
+     * @param UserSubmissionService $userSubmissionService
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, private readonly UserSubmissionService $userSubmissionService)
     {
-        $this->userSubmissionService = resolve(UserSubmissionService::class);
         $this->includes = $request->has('include') ? explode(',', $request->input('include')) : [];
     }
 
