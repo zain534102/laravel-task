@@ -1,0 +1,89 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyModuleNamespace\Services\DummyClassService;
+use DummyModuleNamespace\Requests\CreateDummyClassRequest;
+use DummyModuleNamespace\Requests\UpdateDummyClassRequest;
+use DummyModuleNamespace\DummyClass;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class DummyPluralClassController extends Controller
+{
+    /**
+     * @var DummyClassService
+     */
+    private DummyClassService $dummyService;
+
+    /**
+     * @var array
+     */
+    private array $includes;
+
+    /**
+     * DummyPluralClassController constructor.
+     *
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->dummyService = resolve(DummyClassService::class);
+        $this->includes = $request->has('include') ? explode(',', $request->input('include')) : [];
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return $this->dummyService->index();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param CreateDummyClassRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(CreateDummyClassRequest $request)
+    {
+       return $this->dummyService->store($request,$this->includes);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param string $dummyModelId
+     * @return \Illuminate\Http\Response
+     */
+    public function show(string $dummyModelId)
+    {
+       return $this->dummyService->show($dummyModelId);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param UpdateDummyClassRequest $request
+     * @param DummyClass $dummyModel
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateDummyClassRequest $request, DummyClass $dummyModel)
+    {
+         return $this->dummyService->update($request,$dummyModel,$this->includes);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param DummyClass $dummyModel
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(DummyClass $dummyModel)
+    {
+        return $this->dummyService->destroy($dummyModel);
+    }
+}

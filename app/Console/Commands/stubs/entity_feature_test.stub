@@ -1,0 +1,95 @@
+<?php
+
+namespace DummyTestNamespace;
+
+use DummyModuleNamespace\DummyClass;
+use Tests\TestCase;
+
+class DummyClassFeatureTest extends TestCase
+{
+    const DUMMY_TABLE_NAME = 'dummyTableName';
+
+    /** @test */
+    public function it_can_create_dummySnakeModel()
+    {
+        $data = factory(DummyClass::class)->make()->toArray();
+        $this->post(route('dummyPluralDashModel.store'), $data)
+            ->assertStatus(201)
+            ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function it_can_find_all_dummySnakeModel()
+    {
+        $data = factory(DummyClass::class)->make()->toArray();
+        factory(DummyClass::class)->create($data);
+        $this->get(route('dummyPluralDashModel.index', ['all' => true]))
+            ->assertStatus(200)
+            ->assertJsonFragment($data)
+            ->assertJsonMissing([
+                'pagination' => [
+                    'total' => 1,
+                    'count' => 1,
+                    'per_page' => 15,
+                    'current_page' => 1,
+                    'total_pages' => 1,
+                    'links' => []
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_can_paginate_dummySnakeModel()
+    {
+        $data = factory(DummyClass::class)->make()->toArray();
+        factory(DummyClass::class)->create($data);
+        $this->get(route('dummyPluralDashModel.index'))
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'pagination' => [
+                    'total' => 1,
+                    'count' => 1,
+                    'per_page' => 15,
+                    'current_page' => 1,
+                    'total_pages' => 1,
+                    'links' => []
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_can_find_dummySnakeModel_by_id()
+    {
+        $data = factory(DummyClass::class)->make()->toArray();
+        $dummyModel = factory(DummyClass::class)->create($data);
+        $this->get(route('dummyPluralDashModel.show', $dummyModel))
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function it_can_update_the_dummySnakeModel()
+    {
+        $data = factory(DummyClass::class)->make()->toArray();
+        $dummyModel = factory(DummyClass::class)->create();
+        $this->put(route('dummyPluralDashModel.update', $dummyModel), $data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function it_can_delete_the_dummySnakeModel()
+    {
+        $dummyModel = factory(DummyClass::class)->create();
+        $this->delete(route('dummyPluralDashModel.destroy', $dummyModel))
+            ->assertStatus(202)
+            ->assertExactJson([
+                'status' => 'success',
+                'data' => null
+            ]);
+        $this->assertDatabaseMissing(self::DUMMY_TABLE_NAME, [
+            'id' => $dummyModel->id
+        ]);
+    }
+}
+

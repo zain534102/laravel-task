@@ -13,7 +13,7 @@ class BasicTransformer extends TransformerAbstract
      * @param Model $model
      * @return array
      */
-    public function transform(Model $model): array
+    public function transform(Model $model):array
     {
         return $model->toArray();
     }

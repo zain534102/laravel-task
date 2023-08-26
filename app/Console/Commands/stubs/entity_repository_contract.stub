@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Modules\Common\Contracts\Repositories\BaseRepository;
+
+interface DummyClassRepository extends BaseRepository
+{
+
+}
