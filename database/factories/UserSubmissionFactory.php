@@ -1,4 +1,5 @@
 <?php
+namespace Database\Factories;
 
 use App\Modules\UserSubmissions\UserSubmission;
 use Faker\Generator as Faker;
