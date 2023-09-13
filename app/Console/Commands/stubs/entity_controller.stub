@@ -8,6 +8,7 @@ use DummyModuleNamespace\Requests\UpdateDummyClassRequest;
 use DummyModuleNamespace\DummyClass;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 
 class DummyPluralClassController extends Controller
 {
@@ -20,7 +21,7 @@ class DummyPluralClassController extends Controller
     /**
      * DummyPluralClassController constructor.
      *
-     * @param UserSubmissionService $userSubmissionService
+     * @param DummyClassService $dummyService
      * @param Request $request
      */
     public function __construct(Request $request, private readonly DummyClassService $dummyService)
@@ -42,7 +43,7 @@ class DummyPluralClassController extends Controller
      * Store a newly created resource in storage.
      *
      * @param CreateDummyClassRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function store(CreateDummyClassRequest $request)
     {
@@ -53,7 +54,7 @@ class DummyPluralClassController extends Controller
      * Display the specified resource.
      *
      * @param string $dummyModelId
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function show(string $dummyModelId)
     {
@@ -65,7 +66,7 @@ class DummyPluralClassController extends Controller
      *
      * @param UpdateDummyClassRequest $request
      * @param DummyClass $dummyModel
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function update(UpdateDummyClassRequest $request, DummyClass $dummyModel)
     {
@@ -76,7 +77,7 @@ class DummyPluralClassController extends Controller
      * Remove the specified resource from storage.
      *
      * @param DummyClass $dummyModel
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function destroy(DummyClass $dummyModel)
     {
